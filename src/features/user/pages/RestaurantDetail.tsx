@@ -1,6 +1,6 @@
-import  {
+import {
   memo,
-  
+
 } from "react";
 
 import type {
@@ -23,7 +23,6 @@ import {
   Stack,
 
 } from "@mui/material";
-import type { AlertColor } from "@mui/material/Alert";
 
 import {
   Restaurant as RestaurantIcon,
@@ -34,7 +33,7 @@ import {
   CalendarToday,
   Description,
 
-    Star,
+  Star,
 } from "@mui/icons-material";
 
 
@@ -42,68 +41,7 @@ import {
 // MODELS
 // ═══════════════════════════════════════════════════
 
-export type RestaurantStatus = "active" | "inactive";
-
-export type ViewType = "user" | "admin" | "details";
-
-export interface Restaurant {
-  id: string;
-  name: string;
-  address: string;
-  contact: string;
-  description: string;
-  cuisine: string;
-  rating: number;
-  tables: number;
-  status: RestaurantStatus;
-  createdAt: Date;
-}
-
-/** Raw form values — all fields are strings while the user is editing */
-export interface RestaurantFormValues {
-  name: string;
-  address: string;
-  contact: string;
-  description: string;
-  cuisine: string;
-  rating: string;
-  tables: string;
-  status: RestaurantStatus;
-}
-
-export interface FormErrors {
-  name?: string;
-  address?: string;
-  contact?: string;
-  description?: string;
-}
-
-export interface SnackbarState {
-  open: boolean;
-  msg: string;
-  sev: AlertColor;
-}
-
-export interface NavItem {
-  key: ViewType;
-  label: string;
-  icon: ReactNode;
-}
-
-export interface StatDefinition {
-  icon: ReactNode;
-  label: string;
-  value: string | number;
-  color: string;
-  trend?: string;
-}
-
-export interface DashboardStats {
-  total: number;
-  active: number;
-  avgRating: string;
-  tables: number;
-}
+import type { Restaurant } from "../../../model/Restaurant";
 
 // ═══════════════════════════════════════════════════
 // CONSTANTS & DATA

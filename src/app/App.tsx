@@ -8,7 +8,6 @@ import {
 
 import type {
   FC,
-  ReactNode,
 } from "react";
 import {
   ThemeProvider,
@@ -46,68 +45,10 @@ import { AdminDashboardPage } from "../features/admin/pages/Dashboard";
 // MODELS
 // ═══════════════════════════════════════════════════
 
-export type RestaurantStatus = "active" | "inactive";
-
-export type ViewType = "user" | "admin" | "details";
-
-export interface Restaurant {
-  id: string;
-  name: string;
-  address: string;
-  contact: string;
-  description: string;
-  cuisine: string;
-  rating: number;
-  tables: number;
-  status: RestaurantStatus;
-  createdAt: Date;
-}
-
-/** Raw form values — all fields are strings while the user is editing */
-export interface RestaurantFormValues {
-  name: string;
-  address: string;
-  contact: string;
-  description: string;
-  cuisine: string;
-  rating: string;
-  tables: string;
-  status: RestaurantStatus;
-}
-
-export interface FormErrors {
-  name?: string;
-  address?: string;
-  contact?: string;
-  description?: string;
-}
-
-export interface SnackbarState {
-  open: boolean;
-  msg: string;
-  sev: AlertColor;
-}
-
-export interface NavItem {
-  key: ViewType;
-  label: string;
-  icon: ReactNode;
-}
-
-export interface StatDefinition {
-  icon: ReactNode;
-  label: string;
-  value: string | number;
-  color: string;
-  trend?: string;
-}
-
-export interface DashboardStats {
-  total: number;
-  active: number;
-  avgRating: string;
-  tables: number;
-}
+import type { Restaurant } from "../model/Restaurant";
+import type { RestaurantFormValues } from "../model/RestaurantFormValues";
+import type { SnackbarState } from "../model/SnackbarState";
+import type { NavItem, ViewType } from "../model/NavItem";
 
 // ═══════════════════════════════════════════════════
 // THEME
