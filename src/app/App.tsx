@@ -40,15 +40,17 @@ import {
 import { UserRestaurantsPage } from "../features/user/pages/Home";
 import { RestaurantDetailsPage } from "../features/user/pages/RestaurantDetail";
 import { AdminDashboardPage } from "../features/admin/pages/Dashboard";
+import { ToastContainer } from "react-toastify";
 
+import "react-toastify/dist/ReactToastify.css";
 // ═══════════════════════════════════════════════════
 // MODELS
 // ═══════════════════════════════════════════════════
 
 import type { Restaurant } from "../model/Restaurant";
-import type { RestaurantFormValues } from "../model/RestaurantFormValues";
 import type { SnackbarState } from "../model/SnackbarState";
 import type { NavItem, ViewType } from "../model/NavItem";
+
 
 // ═══════════════════════════════════════════════════
 // THEME
@@ -176,31 +178,7 @@ const theme = createTheme({
   },
 });
 
-// ═══════════════════════════════════════════════════
-// CONSTANTS & DATA
-// ═══════════════════════════════════════════════════
 
-
-
-
-const INITIAL_RESTAURANTS: Restaurant[] = [
-  { id: "1", name: "Le Jardin Céleste", address: "42 Rue de Rivoli, Paris 75001", contact: "+33 1 42 60 81 00", description: "An elevated French brasserie celebrating seasonal produce from the Loire Valley. Our chef brings 20 years of Michelin-starred experience crafting each dish as an edible work of art.", cuisine: "French", rating: 4.9, tables: 24, status: "active", createdAt: new Date("2021-03-15") },
-  { id: "2", name: "Osaka no Yume", address: "8 Takashimaya St, Tokyo 160-0022", contact: "+81 3 5362 7000", description: "A kaiseki journey through Japan's culinary seasons. Each 12-course omakase tells the story of a single ingredient, elevated through centuries of Japanese technique.", cuisine: "Japanese", rating: 4.8, tables: 16, status: "active", createdAt: new Date("2020-11-20") },
-  { id: "3", name: "Fuoco e Sale", address: "Piazza Navona 15, Rome 00186", contact: "+39 06 6880 1094", description: "Authentic Roman trattoria where Nonna's recipes meet contemporary refinement. Wood-fired ovens imported from Naples give our Neapolitan pizzas an irreplaceable char.", cuisine: "Italian", rating: 4.7, tables: 30, status: "active", createdAt: new Date("2019-06-08") },
-  { id: "4", name: "Saffron & Smoke", address: "12 Corniche Road, Dubai Marina", contact: "+971 4 399 9999", description: "A modern Persian gastronomic experience where ancient spice routes meet contemporary plating. Fragrant slow-braised lamb and rose-water desserts define our signature menu.", cuisine: "Persian", rating: 4.6, tables: 40, status: "active", createdAt: new Date("2022-01-10") },
-  { id: "5", name: "The Copper Kettle", address: "7 Charlotte Square, Edinburgh EH2 4DR", contact: "+44 131 225 5109", description: "A Victorian townhouse transformed into Edinburgh's most intimate dining room. Scottish game, wild sea fish, and highland whisky form the pillars of our tasting menu.", cuisine: "Scottish", rating: 4.8, tables: 18, status: "active", createdAt: new Date("2018-09-22") },
-  { id: "6", name: "Casa de los Sueños", address: "Calle Gran Vía 28, Madrid 28013", contact: "+34 91 532 8745", description: "Innovative nuevo cocina celebrating Spain's rich agricultural tradition. Our vermouth bar and tapas experience precede a five-course journey through Iberian terroir.", cuisine: "Spanish", rating: 4.5, tables: 35, status: "inactive", createdAt: new Date("2021-07-14") },
-  { id: "7", name: "Lotus & Lemongrass", address: "35 Sukhumvit Soi 11, Bangkok 10110", contact: "+66 2 252 7998", description: "Modern Thai cuisine that honours the complexity of regional recipes seldom seen outside local homes. Botanical cocktails crafted with Thai herbs complete the aromatic journey.", cuisine: "Thai", rating: 4.7, tables: 28, status: "active", createdAt: new Date("2020-04-18") },
-  { id: "8", name: "Brisket & Barrel", address: "1540 N Damen Ave, Chicago IL 60622", contact: "+1 773 384 7275", description: "A hymn to American smoke culture — 18-hour briskets, heritage pork ribs, and handcrafted bourbon barrels age quietly in our cellar. Nashville influence, Chicago soul.", cuisine: "American BBQ", rating: 4.6, tables: 45, status: "active", createdAt: new Date("2019-12-01") },
-  { id: "9", name: "Alma do Mar", address: "Doca de Alcântara Norte, Lisbon 1350-352", contact: "+351 21 362 0203", description: "Perched over the Tagus, our kitchen celebrates Portugal's deep seafaring heritage. Freshly landed Atlantic catch arrives each morning to be transformed by wood-coal fire.", cuisine: "Portuguese", rating: 4.9, tables: 20, status: "active", createdAt: new Date("2023-02-28") },
-  { id: "10", name: "Bergwald Stube", address: "Maximilianstr. 17, Munich 80539", contact: "+49 89 212 23970", description: "Alpine Bavarian tradition elevated for the discerning palate. Hand-rolled pasta, venison carpaccio, and biodynamic wines from Austria and South Tyrol anchor our seasonal menu.", cuisine: "Bavarian", rating: 4.4, tables: 22, status: "active", createdAt: new Date("2021-11-05") },
-  { id: "11", name: "Terroir & Tide", address: "123 Harbour St, Sydney NSW 2000", contact: "+61 2 9241 1111", description: "A celebration of Australian coastal abundance. Indigenous ingredients — finger lime, saltbush, lemon myrtle — weave through a menu shaped by Polynesian and Asian currents.", cuisine: "Australian", rating: 4.7, tables: 32, status: "active", createdAt: new Date("2022-08-15") },
-  { id: "12", name: "Tigre & Ceviche", address: "Calle Berlín 701, Miraflores, Lima", contact: "+51 1 651 1000", description: "Lima's celebrated Nikkei tradition lives here — the sublime marriage of Peruvian ceviche craft and Japanese precision. Tiger's milk cocktails are legendary among locals.", cuisine: "Peruvian", rating: 4.8, tables: 26, status: "active", createdAt: new Date("2020-03-12") },
-];
-
-
-
-const genId = (): string => Math.random().toString(36).substr(2, 9);
 
 
 // ═══════════════════════════════════════════════════
@@ -287,51 +265,34 @@ const Navbar: FC<NavbarProps> = memo(({ view, onNav }) => {
 // ═══════════════════════════════════════════════════
 
 const App: FC = () => {
-  const [restaurants, setRestaurants] = useState<Restaurant[]>(INITIAL_RESTAURANTS);
+
   const [view, setView] = useState<ViewType>("user");
   const [selected, setSelected] = useState<Restaurant | null>(null);
   const [snackbar, setSnackbar] = useState<SnackbarState>({ open: false, msg: "", sev: "success" });
 
-  const notify = useCallback((msg: string, sev: AlertColor = "success") => {
-    setSnackbar({ open: true, msg, sev });
-  }, []);
 
   const closeSnack = useCallback(() => {
     setSnackbar((s) => ({ ...s, open: false }));
   }, []);
 
-  const handleAdd = useCallback(
-    (values: RestaurantFormValues) => {
-      const r: Restaurant = {
-        ...values,
-        id: genId(),
-        status: "active",
-        rating: parseFloat(values.rating) || 4.5,
-        tables: parseInt(values.tables, 10) || 20,
-        createdAt: new Date(),
-      };
-      setRestaurants((rs) => [r, ...rs]);
-      notify(`"${values.name}" added to the registry`);
-    },
-    [notify]
-  );
 
-  const handleEdit = useCallback(
-    (updated: Restaurant) => {
-      setRestaurants((rs) => rs.map((r) => (r.id === updated.id ? updated : r)));
-      notify(`"${updated.name}" updated successfully`);
-    },
-    [notify]
-  );
 
-  const handleDelete = useCallback(
-    (id: string) => {
-      const r = restaurants.find((r) => r.id === id);
-      setRestaurants((rs) => rs.filter((r) => r.id !== id));
-      notify(`"${r?.name}" removed`, "info");
-    },
-    [restaurants, notify]
-  );
+  // const handleEdit = useCallback(
+  //   (updated: Restaurant) => {
+  //     setRestaurants((rs) => rs.map((r) => (r.id === updated.id ? updated : r)));
+  //     notify(`"${updated.name}" updated successfully`);
+  //   },
+  //   [notify]
+  // );
+
+  // const handleDelete = useCallback(
+  //   (id: string) => {
+  //     const r = restaurants.find((r) => r.id === id);
+  //     setRestaurants((rs) => rs.filter((r) => r.id !== id));
+  //     notify(`"${r?.name}" removed`, "info");
+  //   },
+  //   [restaurants, notify]
+  // );
 
   const handleViewDetails = useCallback((r: Restaurant) => {
     setSelected(r);
@@ -363,7 +324,9 @@ const App: FC = () => {
   };
 
   return (
+    
     <ThemeProvider theme={theme}>
+       <ToastContainer />
       <CssBaseline />
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap');
@@ -385,17 +348,13 @@ const App: FC = () => {
         <Navbar view={view} onNav={handleNav} />
         <Container maxWidth="xl" sx={{ py: { xs: 3, sm: 5 }, px: { xs: 2, sm: 3, lg: 5 } }}>
           {view === "user" && (
-            <UserRestaurantsPage restaurants={restaurants} onViewDetails={handleViewDetails} />
+            <UserRestaurantsPage onViewDetails={handleViewDetails} />
           )}
           {view === "details" && selected !== null && (
             <RestaurantDetailsPage restaurant={selected} onBack={handleBack} />
           )}
           {view === "admin" && (
             <AdminDashboardPage
-              restaurants={restaurants}
-              onAdd={handleAdd}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
             />
           )}
         </Container>

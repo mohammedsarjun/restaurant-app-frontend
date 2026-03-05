@@ -37,6 +37,7 @@ import { RestaurantCard } from "../components/RestaurantCard";
 
 
 import type { Restaurant } from "../../../model/Restaurant";
+import { INITIAL_RESTAURANTS } from "../../../DummyData/dummyData";
 
 
 const PER_PAGE_USER = 6;
@@ -62,11 +63,12 @@ const PaginationComponent: FC<PaginationComponentProps> = memo(({ count, page, o
 
 
 interface UserRestaurantsPageProps {
-  restaurants: Restaurant[];
+
   onViewDetails: (r: Restaurant) => void;
 }
 
-export const UserRestaurantsPage: FC<UserRestaurantsPageProps> = memo(({ restaurants, onViewDetails }) => {
+export const UserRestaurantsPage: FC<UserRestaurantsPageProps> = memo(({  onViewDetails }) => {
+  const [restaurants, setRestaurants] = useState<Restaurant[]>(INITIAL_RESTAURANTS);
   const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);

@@ -64,6 +64,9 @@ import type { Restaurant } from "../../../model/Restaurant";
 import type { RestaurantFormValues } from "../../../model/RestaurantFormValues";
 import type { StatDefinition } from "../../../model/StatDefinition";
 import type { DashboardStats } from "../../../model/DashboardStats";
+import { createRestaurant } from "../../../services/admin/adminRestaurantServices";
+import { INITIAL_RESTAURANTS } from "../../../DummyData/dummyData";
+import { toast } from "react-toastify";
 
 
 // ═══════════════════════════════════════════════════
@@ -200,19 +203,42 @@ const PaginationComponent: FC<PaginationComponentProps> = memo(({ count, page, o
 
 
 
-interface AdminDashboardPageProps {
-    restaurants: Restaurant[];
-    onAdd: (values: RestaurantFormValues) => void;
-    onEdit: (updated: Restaurant) => void;
-    onDelete: (id: string) => void;
-}
 
-export const AdminDashboardPage: FC<AdminDashboardPageProps> = memo(({ restaurants, onAdd, onEdit, onDelete }) => {
+export const AdminDashboardPage = memo(() => {
+    const [restaurants, setRestaurants] = useState<Restaurant[]>(INITIAL_RESTAURANTS);
     const [page, setPage] = useState<number>(1);
     const [search, setSearch] = useState<string>("");
     const [deleteId, setDeleteId] = useState<string | null>(null);
     const [formOpen, setFormOpen] = useState<boolean>(false);
     const [editTarget, setEditTarget] = useState<Restaurant | null>(null);
+    const genId = (): string => Math.random().toString(36).substr(2, 9);
+
+    const onAdd = useCallback(
+        async (values: RestaurantFormValues) => {
+            const r: Restaurant = {
+                ...values,
+                id: genId(),
+                status: "active",
+                rating: parseFloat(values.rating) || 4.5,
+                tables: parseInt(values.tables, 10) || 20,
+                createdAt: new Date(),
+            };
+
+            const response = await createRestaurant(values);
+
+            if (response.success) {
+                toast.success(response.message);
+                setRestaurants((rs) => [r, ...rs]);
+
+            } else {
+                toast.error(response.message);
+            }
+
+
+
+        },
+        []
+    );
 
     const filtered = useMemo<Restaurant[]>(
         () =>
@@ -277,22 +303,24 @@ export const AdminDashboardPage: FC<AdminDashboardPageProps> = memo(({ restauran
                     rating: parseFloat(values.rating) || editTarget.rating,
                     tables: parseInt(values.tables, 10) || editTarget.tables,
                 };
-                onEdit(updated);
+                // onEdit(updated);
                 setEditTarget(null);
             } else {
                 onAdd(values);
             }
             setFormOpen(false);
         },
-        [editTarget, onAdd, onEdit]
+        // onEdit
+        [editTarget, onAdd,]
     );
 
     const handleDeleteConfirm = useCallback(() => {
         if (deleteId) {
-            onDelete(deleteId);
+            // onDelete(deleteId);
             setDeleteId(null);
         }
-    }, [deleteId, onDelete]);
+        // onDelete
+    }, [deleteId,]);
 
     const handleSearchChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value);
