@@ -16,13 +16,16 @@ export const getRestaurantById = async (id: string) => {
 };
 
 export const createRestaurant = async (data: RestaurantFormValues):Promise<ApiResponse<Restaurant>> => {
-  return await axios.post(ADMIN_ENDPOINTS.CREATE_RESTAURANT, data);
+  const response = await axios.post(ADMIN_ENDPOINTS.CREATE_RESTAURANT, data);
+  return response.data;
 };
 
 export const updateRestaurant = async (id: string, data: RestaurantFormValues):Promise<ApiResponse<Restaurant>> => {
-  return await axios.put(ADMIN_ENDPOINTS.UPDATE_RESTAURANT.replace(":id", id), data);
+  const response = await axios.put(ADMIN_ENDPOINTS.UPDATE_RESTAURANT.replace(":id", id), data);
+  return response.data;
 };
 
 export const deleteRestaurant = async (id: string) => {
-  return await axios.delete(ADMIN_ENDPOINTS.DELETE_RESTAURANT.replace(":id", id));
+  const response = await axios.delete(ADMIN_ENDPOINTS.DELETE_RESTAURANT.replace(":id", id));
+  return response.data;
 };

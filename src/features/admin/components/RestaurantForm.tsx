@@ -40,7 +40,7 @@ import {
 import type { Restaurant } from "../../../model/Restaurant";
 import type { RestaurantFormValues } from "../../../model/RestaurantFormValues";
 import type { FormErrors } from "../../../model/FormErrors";
-
+import { restaurantSchema } from "../../../utils/restaurantSchema";
 
 
 const toFormValues = (r: Restaurant): RestaurantFormValues => ({
@@ -89,22 +89,26 @@ export const RestaurantForm: FC<RestaurantFormProps> = memo(({ open, onClose, on
         setErrors((errs) => ({ ...errs, [name]: undefined }));
     }, []);
 
-    const validate = useCallback((): FormErrors => {
-        const e: FormErrors = {};
-        if (!form.name.trim()) e.name = "Name is required";
-        if (!form.address.trim()) e.address = "Address is required";
-        if (!form.contact.trim()) e.contact = "Contact is required";
-        if (!form.description.trim()) e.description = "Description is required";
-        return e;
-    }, [form]);
-
     const handleSave = useCallback(() => {
-        const e = validate();
-        if (Object.keys(e).length > 0) { setErrors(e); return; }
-        onSave({ ...form });
+        const result = restaurantSchema.safeParse(form);
+        if (!result.success) {
+            const newErrors: FormErrors = {};
+            result.error.issues.forEach((err) => {
+                if (err.path[0]) {
+                    const key = err.path[0] as keyof FormErrors;
+                    if (!newErrors[key]) {
+                        newErrors[key] = err.message;
+                    }
+                }
+            });
+            setErrors(newErrors);
+            return;
+        }
+
+        onSave({ ...result.data });
         setForm(EMPTY_FORM);
         setErrors({});
-    }, [form, validate, onSave]);
+    }, [form, onSave]);
 
     const handleClose = useCallback(() => {
         setForm(EMPTY_FORM);
@@ -161,24 +165,36 @@ export const RestaurantForm: FC<RestaurantFormProps> = memo(({ open, onClose, on
                         helperText={errors.contact}
                     />
                     <Stack direction="row" spacing={2}>
-                        <TextField fullWidth label="Cuisine" name="cuisine" value={form.cuisine} onChange={handleChange} />
                         <TextField
                             fullWidth
-                            label="Rating (0–5)"
+                            label="Cuisine *"
+                            name="cuisine"
+                            value={form.cuisine}
+                            onChange={handleChange}
+                            error={!!errors.cuisine}
+                            helperText={errors.cuisine}
+                        />
+                        <TextField
+                            fullWidth
+                            label="Rating (0–5) *"
                             name="rating"
                             type="number"
                             value={form.rating}
                             onChange={handleChange}
                             inputProps={{ min: 0, max: 5, step: 0.1 }}
+                            error={!!errors.rating}
+                            helperText={errors.rating}
                         />
                         <TextField
                             fullWidth
-                            label="Tables"
+                            label="Tables *"
                             name="tables"
                             type="number"
                             value={form.tables}
                             onChange={handleChange}
                             inputProps={{ min: 1 }}
+                            error={!!errors.tables}
+                            helperText={errors.tables}
                         />
                     </Stack>
                     <TextField

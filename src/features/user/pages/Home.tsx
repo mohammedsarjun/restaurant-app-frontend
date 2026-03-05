@@ -67,8 +67,9 @@ interface UserRestaurantsPageProps {
   onViewDetails: (r: Restaurant) => void;
 }
 
-export const UserRestaurantsPage: FC<UserRestaurantsPageProps> = memo(({  onViewDetails }) => {
+export const UserRestaurantsPage: FC<UserRestaurantsPageProps> = memo(({ onViewDetails }) => {
   const [restaurants, setRestaurants] = useState<Restaurant[]>(INITIAL_RESTAURANTS);
+  console.log("setRestaurants", setRestaurants);
   const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);

@@ -1,0 +1,2 @@
+﻿src/features/admin/pages/Dashboard.tsx(300,23): error TS6133: 'updated' is declared but its value is never read.
+src/features/user/pages/Home.tsx(71,23): error TS6133: 'setRestaurants' is declared but its value is never read.

@@ -3,6 +3,8 @@ import {
     useMemo,
     useCallback,
     memo,
+    use,
+    useEffect,
 
 } from "react";
 
@@ -64,7 +66,7 @@ import type { Restaurant } from "../../../model/Restaurant";
 import type { RestaurantFormValues } from "../../../model/RestaurantFormValues";
 import type { StatDefinition } from "../../../model/StatDefinition";
 import type { DashboardStats } from "../../../model/DashboardStats";
-import { createRestaurant } from "../../../services/admin/adminRestaurantServices";
+import { createRestaurant, getAllRestaurants } from "../../../services/admin/adminRestaurantServices";
 import { INITIAL_RESTAURANTS } from "../../../DummyData/dummyData";
 import { toast } from "react-toastify";
 
@@ -213,6 +215,21 @@ export const AdminDashboardPage = memo(() => {
     const [editTarget, setEditTarget] = useState<Restaurant | null>(null);
     const genId = (): string => Math.random().toString(36).substr(2, 9);
 
+    useEffect(() => {
+
+        const fetchRestaurants = async () => {
+            const response = await getAllRestaurants();
+
+            if (response.success) {
+                setRestaurants(response.data);
+            } else {
+                toast.error(response.message);
+            }
+
+        };
+        fetchRestaurants()
+    }, [])
+
     const onAdd = useCallback(
         async (values: RestaurantFormValues) => {
             const r: Restaurant = {
@@ -225,7 +242,6 @@ export const AdminDashboardPage = memo(() => {
             };
 
             const response = await createRestaurant(values);
-
             if (response.success) {
                 toast.success(response.message);
                 setRestaurants((rs) => [r, ...rs]);
@@ -236,6 +252,32 @@ export const AdminDashboardPage = memo(() => {
 
 
 
+        },
+        []
+    );
+
+    const onEdit = useCallback(
+        async (values: Restaurant) => {
+            const response = await updateRestaurant(values.id, values);
+            if (response.success) {
+                toast.success(response.message);
+                setRestaurants((rs) => rs.map((r) => (r.id === values.id ? values : r)));
+            } else {
+                toast.error(response.message);
+            }
+        },
+        []
+    );
+
+    const onDelete = useCallback(
+        async (id: string) => {
+            const response = await deleteRestaurant(id);
+            if (response.success) {
+                toast.success(response.message);
+                setRestaurants((rs) => rs.filter((r) => r.id !== id));
+            } else {
+                toast.error(response.message);
+            }
         },
         []
     );
@@ -303,15 +345,15 @@ export const AdminDashboardPage = memo(() => {
                     rating: parseFloat(values.rating) || editTarget.rating,
                     tables: parseInt(values.tables, 10) || editTarget.tables,
                 };
-                // onEdit(updated);
+
+                onEdit(updated);
                 setEditTarget(null);
             } else {
                 onAdd(values);
             }
             setFormOpen(false);
         },
-        // onEdit
-        [editTarget, onAdd,]
+        [editTarget, onAdd,onEdit]
     );
 
     const handleDeleteConfirm = useCallback(() => {
