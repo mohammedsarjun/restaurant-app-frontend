@@ -20,7 +20,7 @@ export const createRestaurant = async (data: RestaurantFormValues):Promise<ApiRe
   return response.data;
 };
 
-export const updateRestaurant = async (id: string, data: RestaurantFormValues):Promise<ApiResponse<Restaurant>> => {
+export const updateRestaurant = async (id: string, data: Restaurant):Promise<ApiResponse<Restaurant>> => {
   const response = await axios.put(ADMIN_ENDPOINTS.UPDATE_RESTAURANT.replace(":id", id), data);
   return response.data;
 };

@@ -3,7 +3,6 @@ import {
     useMemo,
     useCallback,
     memo,
-    use,
     useEffect,
 
 } from "react";
@@ -66,7 +65,7 @@ import type { Restaurant } from "../../../model/Restaurant";
 import type { RestaurantFormValues } from "../../../model/RestaurantFormValues";
 import type { StatDefinition } from "../../../model/StatDefinition";
 import type { DashboardStats } from "../../../model/DashboardStats";
-import { createRestaurant, getAllRestaurants } from "../../../services/admin/adminRestaurantServices";
+import { createRestaurant, deleteRestaurant, getAllRestaurants, updateRestaurant } from "../../../services/admin/adminRestaurantServices";
 import { INITIAL_RESTAURANTS } from "../../../DummyData/dummyData";
 import { toast } from "react-toastify";
 
@@ -219,7 +218,7 @@ export const AdminDashboardPage = memo(() => {
 
         const fetchRestaurants = async () => {
             const response = await getAllRestaurants();
-
+   
             if (response.success) {
                 setRestaurants(response.data);
             } else {
@@ -258,6 +257,7 @@ export const AdminDashboardPage = memo(() => {
 
     const onEdit = useCallback(
         async (values: Restaurant) => {
+            console.log(values);
             const response = await updateRestaurant(values.id, values);
             if (response.success) {
                 toast.success(response.message);
@@ -339,6 +339,7 @@ export const AdminDashboardPage = memo(() => {
     const handleFormSave = useCallback(
         (values: RestaurantFormValues) => {
             if (editTarget) {
+                console.log(values)
                 const updated: Restaurant = {
                     ...editTarget,
                     ...values,
@@ -358,11 +359,10 @@ export const AdminDashboardPage = memo(() => {
 
     const handleDeleteConfirm = useCallback(() => {
         if (deleteId) {
-            // onDelete(deleteId);
+            onDelete(deleteId);
             setDeleteId(null);
         }
-        // onDelete
-    }, [deleteId,]);
+    }, [deleteId,onDelete]);
 
     const handleSearchChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value);

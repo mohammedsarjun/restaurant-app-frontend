@@ -3,6 +3,7 @@ import {
   useMemo,
   useCallback,
   memo,
+  useEffect,
 
 } from "react";
 
@@ -38,6 +39,9 @@ import { RestaurantCard } from "../components/RestaurantCard";
 
 import type { Restaurant } from "../../../model/Restaurant";
 import { INITIAL_RESTAURANTS } from "../../../DummyData/dummyData";
+import { getAllRestaurants } from "../../../services/admin/adminRestaurantServices";
+import { getAllUserRestaurants } from "../../../services/user/userRestaurantService";
+import { toast } from "react-toastify";
 
 
 const PER_PAGE_USER = 6;
@@ -69,11 +73,27 @@ interface UserRestaurantsPageProps {
 
 export const UserRestaurantsPage: FC<UserRestaurantsPageProps> = memo(({ onViewDetails }) => {
   const [restaurants, setRestaurants] = useState<Restaurant[]>(INITIAL_RESTAURANTS);
-  console.log("setRestaurants", setRestaurants);
   const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
+
+  useEffect(() => {
+
+    async function fetchAllRestaurants (){
+      try{
+        const res = await getAllUserRestaurants();
+        if(res.success){
+          setRestaurants(res.data);
+        }else{
+          toast.error(res.message);
+        }
+      }catch(error){
+        console.log(error);
+      }
+    }
+    fetchAllRestaurants();
+  }, []);
   const filtered = useMemo<Restaurant[]>(
     () =>
       restaurants.filter((r) =>
