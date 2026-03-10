@@ -66,7 +66,7 @@ import type { RestaurantFormValues } from "../../../model/RestaurantFormValues";
 import type { StatDefinition } from "../../../model/StatDefinition";
 import type { DashboardStats } from "../../../model/DashboardStats";
 import { createRestaurant, deleteRestaurant, getAllRestaurants, updateRestaurant } from "../../../services/admin/adminRestaurantServices";
-import { INITIAL_RESTAURANTS } from "../../../DummyData/dummyData";
+// import { INITIAL_RESTAURANTS } from "../../../DummyData/dummyData";
 import { toast } from "react-toastify";
 
 
@@ -206,7 +206,7 @@ const PaginationComponent: FC<PaginationComponentProps> = memo(({ count, page, o
 
 
 export const AdminDashboardPage = memo(() => {
-    const [restaurants, setRestaurants] = useState<Restaurant[]>(INITIAL_RESTAURANTS);
+    const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
     const [page, setPage] = useState<number>(1);
     const [search, setSearch] = useState<string>("");
     const [totalPages, setTotalPages] = useState<number>(1);
