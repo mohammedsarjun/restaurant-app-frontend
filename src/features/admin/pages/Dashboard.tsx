@@ -245,13 +245,13 @@ export const AdminDashboardPage = memo(() => {
             const response = await createRestaurant(values);
             if (response.success) {
                 toast.success(response.message);
+                r.id=response?.data?.id
+                console.log(r.id)
                 setRestaurants((rs) => [r, ...rs]);
 
             } else {
                 toast.error(response.message);
             }
-
-
 
         },
         []
@@ -327,6 +327,7 @@ export const AdminDashboardPage = memo(() => {
             if (editTarget) {
                 console.log(values)
                 const updated: Restaurant = {
+                    
                     ...editTarget,
                     ...values,
                     rating: parseFloat(values.rating) || editTarget.rating,
