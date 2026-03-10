@@ -1,6 +1,5 @@
 import {
   useState,
-  useMemo,
   useCallback,
   memo,
   useEffect,
@@ -38,7 +37,7 @@ import { RestaurantCard } from "../components/RestaurantCard";
 
 
 import type { Restaurant } from "../../../model/Restaurant";
-import { INITIAL_RESTAURANTS } from "../../../DummyData/dummyData";
+// import { INITIAL_RESTAURANTS } from "../../../DummyData/dummyData";
 
 import { getAllUserRestaurants } from "../../../services/user/userRestaurantService";
 import { toast } from "react-toastify";
@@ -72,11 +71,10 @@ interface UserRestaurantsPageProps {
 }
 
 export const UserRestaurantsPage: FC<UserRestaurantsPageProps> = memo(({ onViewDetails }) => {
-  const [restaurants, setRestaurants] = useState<Restaurant[]>(INITIAL_RESTAURANTS);
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [pageCount, setPageCount] = useState<number>(0);
   const [totalPage, setTotalPage] = useState<number>(0);
   const limit = 6
 
@@ -87,7 +85,7 @@ export const UserRestaurantsPage: FC<UserRestaurantsPageProps> = memo(({ onViewD
         const res = await getAllUserRestaurants(page,limit,search);
         if(res.success){
           setRestaurants(res.data.restaurants);
-          setPageCount(page);
+            // setPageCount(page);
           setTotalPage(res.data.totalPages);
         }else{
           toast.error(res.message);
