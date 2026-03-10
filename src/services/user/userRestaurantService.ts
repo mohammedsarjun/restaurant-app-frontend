@@ -1,8 +1,8 @@
 import axios from "../../api/axios";
 import { USER_ENDPOINTS } from "../../endpoints/userEndPoints";
 
-export const getAllUserRestaurants = async () => {
-  const response = await axios.get(USER_ENDPOINTS.GET_ALL_RESTAURANTS);
+export const getAllUserRestaurants = async (page: number, limit: number, search: string) => {
+  const response = await axios.get(USER_ENDPOINTS.GET_ALL_RESTAURANTS,{params:{page:page,limit:limit,search:search}});
   return response.data;
 };
 

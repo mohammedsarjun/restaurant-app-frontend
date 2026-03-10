@@ -39,7 +39,7 @@ import { RestaurantCard } from "../components/RestaurantCard";
 
 import type { Restaurant } from "../../../model/Restaurant";
 import { INITIAL_RESTAURANTS } from "../../../DummyData/dummyData";
-import { getAllRestaurants } from "../../../services/admin/adminRestaurantServices";
+
 import { getAllUserRestaurants } from "../../../services/user/userRestaurantService";
 import { toast } from "react-toastify";
 
@@ -76,15 +76,19 @@ export const UserRestaurantsPage: FC<UserRestaurantsPageProps> = memo(({ onViewD
   const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-
+  const [pageCount, setPageCount] = useState<number>(0);
+  const [totalPage, setTotalPage] = useState<number>(0);
+  const limit = 6
 
   useEffect(() => {
 
     async function fetchAllRestaurants (){
       try{
-        const res = await getAllUserRestaurants();
+        const res = await getAllUserRestaurants(page,limit,search);
         if(res.success){
-          setRestaurants(res.data);
+          setRestaurants(res.data.restaurants);
+          setPageCount(page);
+          setTotalPage(res.data.totalPages);
         }else{
           toast.error(res.message);
         }
@@ -93,23 +97,11 @@ export const UserRestaurantsPage: FC<UserRestaurantsPageProps> = memo(({ onViewD
       }
     }
     fetchAllRestaurants();
-  }, []);
-  const filtered = useMemo<Restaurant[]>(
-    () =>
-      restaurants.filter((r) =>
-        [r.name, r.address, r.cuisine, r.contact].some((v) =>
-          v?.toLowerCase().includes(search.toLowerCase())
-        )
-      ),
-    [restaurants, search]
-  );
+  }, [page,limit,search]);
 
-  const pageCount = useMemo<number>(() => Math.ceil(filtered.length / PER_PAGE_USER), [filtered.length]);
 
-  const paginated = useMemo<Restaurant[]>(
-    () => filtered.slice((page - 1) * PER_PAGE_USER, page * PER_PAGE_USER),
-    [filtered, page]
-  );
+
+
 
   const handleSearch = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
@@ -168,7 +160,7 @@ export const UserRestaurantsPage: FC<UserRestaurantsPageProps> = memo(({ onViewD
               </Grid>
             ))}
           </Grid>
-        ) : paginated.length === 0 ? (
+        ) : restaurants.length === 0 ? (
           <Box textAlign="center" py={12}>
             <RestaurantIcon sx={{ fontSize: 64, color: "rgba(200,169,110,0.15)", display: "block", mx: "auto", mb: 2 }} />
             <Typography variant="h5" color="text.secondary" gutterBottom>
@@ -181,7 +173,7 @@ export const UserRestaurantsPage: FC<UserRestaurantsPageProps> = memo(({ onViewD
         ) : (
           <>
             <Grid container spacing={3}>
-              {paginated.map((r) => (
+              {restaurants.map((r) => (
                 <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={r.id}>
                   <RestaurantCard restaurant={r} onClick={onViewDetails} />
                 </Grid>
@@ -189,10 +181,10 @@ export const UserRestaurantsPage: FC<UserRestaurantsPageProps> = memo(({ onViewD
             </Grid>
             <Stack direction="row" justifyContent="space-between" alignItems="center" mt={4} flexWrap="wrap" gap={2}>
               <Typography variant="caption" color="text.secondary">
-                Showing {(page - 1) * PER_PAGE_USER + 1}–{Math.min(page * PER_PAGE_USER, filtered.length)} of{" "}
-                {filtered.length}
+                Showing {(page - 1) * PER_PAGE_USER + 1}–{Math.min(page * PER_PAGE_USER, restaurants.length)} of{" "}
+                {restaurants.length}
               </Typography>
-              <PaginationComponent count={pageCount} page={page} onChange={handlePage} />
+              <PaginationComponent count={totalPage} page={page} onChange={handlePage} />
             </Stack>
           </>
         )}

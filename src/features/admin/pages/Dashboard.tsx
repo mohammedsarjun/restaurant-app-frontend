@@ -107,7 +107,7 @@ const cuisineColor = (cuisine: string): string =>
 
 
 
-const PER_PAGE_ADMIN = 7;
+const PER_PAGE_ADMIN = 6;
 
 
 
@@ -209,6 +209,7 @@ export const AdminDashboardPage = memo(() => {
     const [restaurants, setRestaurants] = useState<Restaurant[]>(INITIAL_RESTAURANTS);
     const [page, setPage] = useState<number>(1);
     const [search, setSearch] = useState<string>("");
+    const [totalPages, setTotalPages] = useState<number>(1);
     const [deleteId, setDeleteId] = useState<string | null>(null);
     const [formOpen, setFormOpen] = useState<boolean>(false);
     const [editTarget, setEditTarget] = useState<Restaurant | null>(null);
@@ -217,17 +218,18 @@ export const AdminDashboardPage = memo(() => {
     useEffect(() => {
 
         const fetchRestaurants = async () => {
-            const response = await getAllRestaurants();
-   
+            const response = await getAllRestaurants(page,PER_PAGE_ADMIN,search);
+   console.log(response)
             if (response.success) {
-                setRestaurants(response.data);
+                setRestaurants(response.data.restaurants);
+                setTotalPages(response.data.totalPages);
             } else {
                 toast.error(response.message);
             }
 
         };
         fetchRestaurants()
-    }, [])
+    }, [page,search])
 
     const onAdd = useCallback(
         async (values: RestaurantFormValues) => {
@@ -282,22 +284,6 @@ export const AdminDashboardPage = memo(() => {
         []
     );
 
-    const filtered = useMemo<Restaurant[]>(
-        () =>
-            restaurants.filter((r) =>
-                [r.name, r.cuisine, r.address, r.contact].some((v) =>
-                    v?.toLowerCase().includes(search.toLowerCase())
-                )
-            ),
-        [restaurants, search]
-    );
-
-    const pageCount = useMemo<number>(() => Math.ceil(filtered.length / PER_PAGE_ADMIN), [filtered.length]);
-
-    const paginated = useMemo<Restaurant[]>(
-        () => filtered.slice((page - 1) * PER_PAGE_ADMIN, page * PER_PAGE_ADMIN),
-        [filtered, page]
-    );
 
     const stats = useMemo<DashboardStats>(
         () => ({
@@ -443,7 +429,7 @@ export const AdminDashboardPage = memo(() => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {paginated.length === 0 ? (
+                                {restaurants.length === 0 ? (
                                     <TableRow>
                                         <TableCell colSpan={6} align="center" sx={{ py: 8, borderBottom: "none" }}>
                                             <RestaurantIcon sx={{ fontSize: 40, color: "rgba(200,169,110,0.15)", display: "block", mx: "auto", mb: 1.5 }} />
@@ -451,7 +437,7 @@ export const AdminDashboardPage = memo(() => {
                                         </TableCell>
                                     </TableRow>
                                 ) : (
-                                    paginated.map((r) => {
+                                    restaurants.map((r) => {
                                         const cc = cuisineColor(r.cuisine);
                                         const rgb = parseRGB(cc);
                                         return (
@@ -569,9 +555,9 @@ export const AdminDashboardPage = memo(() => {
                         }}
                     >
                         <Typography variant="caption" color="text.secondary">
-                            {filtered.length} restaurant{filtered.length !== 1 ? "s" : ""}
+                            {restaurants.length} restaurant{restaurants.length !== 1 ? "s" : ""}
                         </Typography>
-                        <PaginationComponent count={pageCount} page={page} onChange={handlePageChange} />
+                        <PaginationComponent count={totalPages} page={page} onChange={handlePageChange} />
                     </Box>
                 </Card>
 

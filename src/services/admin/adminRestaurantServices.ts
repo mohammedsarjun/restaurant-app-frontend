@@ -5,8 +5,14 @@ import type { Restaurant } from "../../model/Restaurant";
 
 import type { RestaurantFormValues } from "../../model/RestaurantFormValues";
 
-export const getAllRestaurants = async () => {
-  const response = await axios.get(ADMIN_ENDPOINTS.GET_ALL_RESTAURANTS);
+export const getAllRestaurants = async (page:number,limit:number,search:string) => {
+  const response = await axios.get(ADMIN_ENDPOINTS.GET_ALL_RESTAURANTS,{
+    params:{
+      page,
+      limit,
+      search
+    }
+  });
   return response.data;
 };
 
