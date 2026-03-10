@@ -233,7 +233,7 @@ const Navbar: FC<NavbarProps> = memo(({ view, onNav }) => {
               fontWeight: 600,
             }}
           >
-            {mobile ? "Maître" : "Maître de Maison"}
+            {mobile ? "Restaurants" : "Restaurants"}
           </Typography>
         </Stack>
 
