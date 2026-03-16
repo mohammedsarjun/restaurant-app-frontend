@@ -95,7 +95,8 @@ const fmtDate = (d: Date): string =>
 
 
 export const RestaurantDetailsPage: FC<RestaurantDetailsPageProps> = memo(({ restaurant, onBack }) => {
-  const cc = cuisineColor(restaurant.cuisine);
+  const cName = restaurant.cuisine?.name || "Unknown";
+  const cc = cuisineColor(cName);
   const rgb = parseRGB(cc);
 
   const details: DetailRow[] = [
@@ -158,9 +159,9 @@ export const RestaurantDetailsPage: FC<RestaurantDetailsPageProps> = memo(({ res
                       {restaurant.name}
                     </Typography>
                     <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>
-                      {restaurant.cuisine && (
+                      {cName && (
                         <Chip
-                          label={restaurant.cuisine}
+                          label={cName}
                           size="small"
                           sx={{ background: `rgba(${rgb},0.1)`, color: cc, border: `1px solid rgba(${rgb},0.2)` }}
                         />

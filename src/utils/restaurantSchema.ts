@@ -14,7 +14,7 @@ export const restaurantSchema = z.object({
     address: normalizedString("Address"),
     contact: normalizedString("Contact"),
     description: normalizedString("Description"),
-    cuisine: normalizedString("Cuisine"),
+    cuisineId: z.union([z.string().min(1, "Cuisine is required"), z.number()]),
     rating: z
         .string()
         .min(1, "Rating is required")

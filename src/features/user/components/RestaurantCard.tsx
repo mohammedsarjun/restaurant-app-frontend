@@ -76,7 +76,8 @@ interface RestaurantCardProps {
 
 
 export const RestaurantCard: FC<RestaurantCardProps> = memo(({ restaurant, onClick }) => {
-  const cc = cuisineColor(restaurant.cuisine);
+  const cName = restaurant.cuisine?.name || "Unknown";
+  const cc = cuisineColor(cName);
   const rgb = parseRGB(cc);
 
   const cardSx: SxProps<Theme> = {
@@ -137,7 +138,7 @@ export const RestaurantCard: FC<RestaurantCardProps> = memo(({ restaurant, onCli
         </Typography>
 
         <Chip
-          label={restaurant.cuisine}
+          label={cName}
           size="small"
           sx={{
             mb: 2,

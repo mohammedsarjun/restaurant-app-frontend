@@ -1,12 +1,13 @@
 export type RestaurantStatus = "active" | "inactive";
 
 export interface Restaurant {
-  id: string;
+  id: any;
   name: string;
   address: string;
   contact: string;
   description: string;
-  cuisine: string;
+  cuisineId: number;
+  cuisine?: { id: number; name: string };
   rating: number;
   tables: number;
   status: RestaurantStatus;

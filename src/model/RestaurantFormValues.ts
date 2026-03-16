@@ -6,7 +6,7 @@ export interface RestaurantFormValues {
   address: string;
   contact: string;
   description: string;
-  cuisine: string;
+  cuisineId: string | number;
   rating: string;
   tables: string;
   status: RestaurantStatus;

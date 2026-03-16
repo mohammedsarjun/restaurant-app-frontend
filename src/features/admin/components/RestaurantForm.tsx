@@ -2,7 +2,7 @@ import {
     useState,
     useCallback,
     memo,
-
+    useEffect,
 } from "react";
 
 import type {
@@ -21,8 +21,7 @@ import {
     DialogActions,
     Slide,
     Stack,
-
-
+    MenuItem,
 } from "@mui/material";
 import type { TransitionProps } from "@mui/material/transitions";
 
@@ -41,6 +40,8 @@ import type { Restaurant } from "../../../model/Restaurant";
 import type { RestaurantFormValues } from "../../../model/RestaurantFormValues";
 import type { FormErrors } from "../../../model/FormErrors";
 import { restaurantSchema } from "../../../utils/restaurantSchema";
+import { getAllActiveCuisines } from "../../../services/admin/adminCuisineServices";
+import type { Cuisine } from "../../../model/Cuisine";
 
 
 const toFormValues = (r: Restaurant): RestaurantFormValues => ({
@@ -48,7 +49,7 @@ const toFormValues = (r: Restaurant): RestaurantFormValues => ({
     address: r.address,
     contact: r.contact,
     description: r.description,
-    cuisine: r.cuisine,
+    cuisineId: String(r.cuisineId),
     rating: String(r.rating),
     tables: String(r.tables),
     status: r.status,
@@ -59,7 +60,7 @@ const EMPTY_FORM: RestaurantFormValues = {
     address: "",
     contact: "",
     description: "",
-    cuisine: "",
+    cuisineId: "",
     rating: "",
     tables: "",
     status: "active",
@@ -82,6 +83,17 @@ export const RestaurantForm: FC<RestaurantFormProps> = memo(({ open, onClose, on
         initial ? toFormValues(initial) : EMPTY_FORM
     );
     const [errors, setErrors] = useState<FormErrors>({});
+    const [cuisines, setCuisines] = useState<Cuisine[]>([]);
+
+    useEffect(() => {
+        const fetchCuisines = async () => {
+            const response = await getAllActiveCuisines();
+            if (response.success && response.data) {
+                setCuisines(response.data);
+            }
+        };
+        fetchCuisines();
+    }, []);
 
     const handleChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -167,13 +179,20 @@ export const RestaurantForm: FC<RestaurantFormProps> = memo(({ open, onClose, on
                     <Stack direction="row" spacing={2}>
                         <TextField
                             fullWidth
+                            select
                             label="Cuisine *"
-                            name="cuisine"
-                            value={form.cuisine}
+                            name="cuisineId"
+                            value={form.cuisineId}
                             onChange={handleChange}
-                            error={!!errors.cuisine}
-                            helperText={errors.cuisine}
-                        />
+                            error={!!errors.cuisineId}
+                            helperText={errors.cuisineId}
+                        >
+                            {cuisines.map((c) => (
+                                <MenuItem key={c.id} value={String(c.id)}>
+                                    {c.name}
+                                </MenuItem>
+                            ))}
+                        </TextField>
                         <TextField
                             fullWidth
                             label="Rating (0–5) *"
