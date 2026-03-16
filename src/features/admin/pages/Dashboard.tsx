@@ -233,23 +233,11 @@ export const AdminDashboardPage = memo(() => {
 
     const onAdd = useCallback(
         async (values: RestaurantFormValues) => {
-            const r: Restaurant = {
-                ...values,
-                id: 0, // Backend will provide ID
-                status: "active",
-                cuisineId: Number(values.cuisineId),
-                rating: parseFloat(values.rating) || 4.5,
-                tables: parseInt(values.tables, 10) || 20,
-                createdAt: new Date(),
-            };
-
             const response = await createRestaurant(values);
-            if (response.success) {
-                toast.success(response.message);
-                r.id = response?.data?.id
-                console.log(r.id)
-                setRestaurants((rs) => [r, ...rs]);
 
+            if (response.success && response.data) {
+                toast.success(response.message);
+                setRestaurants((rs) => [response.data!, ...rs]);
             } else {
                 toast.error(response.message);
             }
@@ -262,9 +250,9 @@ export const AdminDashboardPage = memo(() => {
         async (values: Restaurant) => {
             console.log(values);
             const response = await updateRestaurant(values.id, values);
-            if (response.success) {
+            if (response.success && response.data) {
                 toast.success(response.message);
-                setRestaurants((rs) => rs.map((r) => (r.id === values.id ? values : r)));
+                setRestaurants((rs) => rs.map((r) => (r.id === values.id ? response.data! : r)));
             } else {
                 toast.error(response.message);
             }
