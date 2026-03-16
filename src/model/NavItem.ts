@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-export type ViewType = "user" | "admin" | "details";
+export type ViewType = "user" | "admin" | "details" | "admin_cuisines";
 
 export interface NavItem {
   key: ViewType;

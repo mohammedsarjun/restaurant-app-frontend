@@ -33,13 +33,13 @@ import type { AlertColor } from "@mui/material/Alert";
 import {
   Restaurant as RestaurantIcon,
   People,
-
   AdminPanelSettings,
-
+  RestaurantMenu,
 } from "@mui/icons-material";
 import { UserRestaurantsPage } from "../features/user/pages/Home";
 import { RestaurantDetailsPage } from "../features/user/pages/RestaurantDetail";
 import { AdminDashboardPage } from "../features/admin/pages/Dashboard";
+import { AdminCuisinesPage } from "../features/admin/pages/Cuisines";
 import { ToastContainer } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -197,6 +197,7 @@ const Navbar: FC<NavbarProps> = memo(({ view, onNav }) => {
     () => [
       { key: "user", label: mobile ? "Browse" : "Restaurants", icon: <People sx={{ fontSize: 15 }} /> },
       { key: "admin", label: mobile ? "Admin" : "Dashboard", icon: <AdminPanelSettings sx={{ fontSize: 15 }} /> },
+      { key: "admin_cuisines", label: mobile ? "Cuisines" : "Cuisines", icon: <RestaurantMenu sx={{ fontSize: 15 }} /> },
     ],
     [mobile]
   );
@@ -324,9 +325,9 @@ const App: FC = () => {
   };
 
   return (
-    
+
     <ThemeProvider theme={theme}>
-       <ToastContainer />
+      <ToastContainer />
       <CssBaseline />
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap');
@@ -354,8 +355,10 @@ const App: FC = () => {
             <RestaurantDetailsPage restaurant={selected} onBack={handleBack} />
           )}
           {view === "admin" && (
-            <AdminDashboardPage
-            />
+            <AdminDashboardPage />
+          )}
+          {view === "admin_cuisines" && (
+            <AdminCuisinesPage />
           )}
         </Container>
       </Box>

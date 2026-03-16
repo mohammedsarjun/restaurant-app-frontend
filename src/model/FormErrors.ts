@@ -3,7 +3,7 @@ export interface FormErrors {
   address?: string;
   contact?: string;
   description?: string;
-  cuisine?: string;
+  cuisineId?: string;
   rating?: string;
   tables?: string;
 }

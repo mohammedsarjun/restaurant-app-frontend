@@ -213,13 +213,13 @@ export const AdminDashboardPage = memo(() => {
     const [deleteId, setDeleteId] = useState<string | null>(null);
     const [formOpen, setFormOpen] = useState<boolean>(false);
     const [editTarget, setEditTarget] = useState<Restaurant | null>(null);
-    const genId = (): string => Math.random().toString(36).substr(2, 9);
+
 
     useEffect(() => {
 
         const fetchRestaurants = async () => {
-            const response = await getAllRestaurants(page,PER_PAGE_ADMIN,search);
-   console.log(response)
+            const response = await getAllRestaurants(page, PER_PAGE_ADMIN, search);
+            console.log(response)
             if (response.success) {
                 setRestaurants(response.data.restaurants);
                 setTotalPages(response.data.totalPages);
@@ -229,14 +229,15 @@ export const AdminDashboardPage = memo(() => {
 
         };
         fetchRestaurants()
-    }, [page,search])
+    }, [page, search])
 
     const onAdd = useCallback(
         async (values: RestaurantFormValues) => {
             const r: Restaurant = {
                 ...values,
-                id: genId(),
+                id: 0, // Backend will provide ID
                 status: "active",
+                cuisineId: Number(values.cuisineId),
                 rating: parseFloat(values.rating) || 4.5,
                 tables: parseInt(values.tables, 10) || 20,
                 createdAt: new Date(),
@@ -245,7 +246,7 @@ export const AdminDashboardPage = memo(() => {
             const response = await createRestaurant(values);
             if (response.success) {
                 toast.success(response.message);
-                r.id=response?.data?.id
+                r.id = response?.data?.id
                 console.log(r.id)
                 setRestaurants((rs) => [r, ...rs]);
 
@@ -327,9 +328,9 @@ export const AdminDashboardPage = memo(() => {
             if (editTarget) {
                 console.log(values)
                 const updated: Restaurant = {
-                    
                     ...editTarget,
                     ...values,
+                    cuisineId: Number(values.cuisineId),
                     rating: parseFloat(values.rating) || editTarget.rating,
                     tables: parseInt(values.tables, 10) || editTarget.tables,
                 };
@@ -341,7 +342,7 @@ export const AdminDashboardPage = memo(() => {
             }
             setFormOpen(false);
         },
-        [editTarget, onAdd,onEdit]
+        [editTarget, onAdd, onEdit]
     );
 
     const handleDeleteConfirm = useCallback(() => {
@@ -349,7 +350,7 @@ export const AdminDashboardPage = memo(() => {
             onDelete(deleteId);
             setDeleteId(null);
         }
-    }, [deleteId,onDelete]);
+    }, [deleteId, onDelete]);
 
     const handleSearchChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value);
@@ -439,7 +440,8 @@ export const AdminDashboardPage = memo(() => {
                                     </TableRow>
                                 ) : (
                                     restaurants.map((r) => {
-                                        const cc = cuisineColor(r.cuisine);
+                                        const cName = r.cuisine?.name || "Unknown";
+                                        const cc = cuisineColor(cName);
                                         const rgb = parseRGB(cc);
                                         return (
                                             <TableRow key={r.id}>
@@ -464,7 +466,7 @@ export const AdminDashboardPage = memo(() => {
                                                                 {r.name}
                                                             </Typography>
                                                             <Typography variant="caption" color="text.secondary" sx={{ display: { md: "none" } }}>
-                                                                {r.cuisine}
+                                                                {cName}
                                                             </Typography>
                                                         </Box>
                                                     </Stack>
@@ -472,7 +474,7 @@ export const AdminDashboardPage = memo(() => {
 
                                                 <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>
                                                     <Chip
-                                                        label={r.cuisine || "—"}
+                                                        label={cName}
                                                         size="small"
                                                         sx={{
                                                             background: `rgba(${rgb},0.09)`,
